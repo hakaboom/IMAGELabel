@@ -2,7 +2,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import *
-from src.picture_list import foldWidget as pictureListWidget
+from src.fold_widget import foldWidget as pictureListWidget
+from src.image_label import image_label as imageLabel
 import sys
 
 
@@ -34,19 +35,15 @@ class MainUi(QtWidgets.QMainWindow):
         self.picture_list_layout.setObjectName('picture_list_layout')
 
         # 图像栏
-        self.image_widget = QtWidgets.QWidget()
-        self.image_widget.setObjectName('image_widget')
-        self.image_layout = QtWidgets.QGridLayout()
-        self.image_layout.setObjectName('image_layout')
+        self.image_widget = imageLabel()
 
         self.main_layout.addWidget(self.picture_list_widget)
         self.main_layout.addWidget(self.image_widget)
 
         self.main_layout.setStretch(0, 1)
-        self.main_layout.setStretch(1, 5)
+        self.main_layout.setStretch(1, 6)
 
         self.init_picture_list()
-        self.init_image()
 
     def init_picture_list(self):
         self.picture_list_widget.setLayout(self.picture_list_layout)
@@ -59,15 +56,18 @@ class MainUi(QtWidgets.QMainWindow):
         for index, btn in enumerate(picture_list):
             def onClick_fun():
                 i = index
+
                 def fun():
                     self.image_widget.setStyleSheet(test_color[i])
                 return fun
             btn.onClick_fun = onClick_fun()
 
-    def init_image(self):
-        self.image_widget.setLayout(self.image_layout)
-        self.image_widget.setStyleSheet('''QWidget{background-color:#00ffff;}''')
 
+# if __name__ == '__main__':
+#     app  =QApplication(sys.argv)
+#     win = HelpWindow()
+#     win.show()
+#     sys.exit(app.exec_())
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
