@@ -20,8 +20,8 @@ class MainUi(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainUi, self).__init__()
         self.resize(960, 540)
-        self.main_widget = QtWidgets.QWidget()  # 创建窗口主部件
-        self.main_layout = QtWidgets.QHBoxLayout()  # 创建主部件的网格布局
+        self.main_widget = QWidget()  # 创建窗口主部件
+        self.main_layout = QHBoxLayout()  # 创建主部件的网格布局
         self.main_widget.setLayout(self.main_layout)  # 设置窗口主部件布局为网格布局
 
         self.setCentralWidget(self.main_widget)  # 设置窗口主部件
@@ -29,19 +29,19 @@ class MainUi(QtWidgets.QMainWindow):
         self.setWindowTitle("test")  # 设置窗口名
 
         # 工具栏
-        self.picture_list_widget = QtWidgets.QWidget()
+        self.picture_list_widget = QWidget()
         self.picture_list_widget.setObjectName('picture_list_widget')
-        self.picture_list_layout = QtWidgets.QVBoxLayout()
+        self.picture_list_layout = QVBoxLayout()
         self.picture_list_layout.setObjectName('picture_list_layout')
 
         # 图像栏
         self.image_widget = imageLabel()
-
         self.main_layout.addWidget(self.picture_list_widget)
         self.main_layout.addWidget(self.image_widget)
 
         self.main_layout.setStretch(0, 1)
         self.main_layout.setStretch(1, 6)
+        self.main_layout.setSpacing(0)
 
         self.init_picture_list()
 
@@ -62,12 +62,6 @@ class MainUi(QtWidgets.QMainWindow):
                 return fun
             btn.onClick_fun = onClick_fun()
 
-
-# if __name__ == '__main__':
-#     app  =QApplication(sys.argv)
-#     win = HelpWindow()
-#     win.show()
-#     sys.exit(app.exec_())
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
