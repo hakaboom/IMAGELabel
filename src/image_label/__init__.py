@@ -21,6 +21,8 @@ class custom_label(QLabel):
         self.mouse_release_callback = []
         self.mouse_move_callback = []
 
+        self.setMouseTracking(True)  # 设置鼠标跟踪
+
     def mousePressEvent(self, event: QMouseEvent) -> None:
         if event.buttons() == Qt.LeftButton:
             self.left_flag = True
@@ -44,8 +46,9 @@ class custom_label(QLabel):
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         # 记录本次移动时的光标坐标
-        self.mouse_mv_now_x, self.mouse_mv_now_y = event.x(), event.y()
-        # print(event.x(), event.y())
+        if self.left_flag:
+            self.mouse_mv_now_x, self.mouse_mv_now_y = event.x(), event.y()
+        print('move mouse: x={}, y={}'.format(event.x(), event.y()))
         self.run_mouse_move_callback()
 
     def set_mouse_press_callback(self, fun):
