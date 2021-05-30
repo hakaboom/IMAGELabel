@@ -22,11 +22,14 @@ class custom_label(QLabel):
         self.mouse_move_callback = []
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
-        self.label_x = event.x()
-        self.label_y = event.y()
-        self.mouse_mv_now_x = event.x()
-        self.mouse_mv_now_y = event.y()
-        self.left_flag = True
+        if event.buttons() == Qt.LeftButton:
+            self.left_flag = True
+            self.label_x = event.x()
+            self.label_y = event.y()
+            self.mouse_mv_last_x = event.x()
+            self.mouse_mv_last_y = event.y()
+            print('press point: x={}, y={}'.format(event.x(), event.y()))
+
         self.run_mouse_press_callback()
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
@@ -41,11 +44,9 @@ class custom_label(QLabel):
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         # 记录本次移动时的光标坐标
-        self.mouse_mv_last_x, self.mouse_mv_last_y = event.x(), event.y()
+        self.mouse_mv_now_x, self.mouse_mv_now_y = event.x(), event.y()
         # print(event.x(), event.y())
         self.run_mouse_move_callback()
-        # 结束事件时,
-
 
     def set_mouse_press_callback(self, fun):
         self.mouse_press_callback.append(fun)
@@ -113,12 +114,12 @@ class image_label(QWidget):
         def move_fun():
             def callback(label: custom_label):
                 if label.left_flag:
-                    move_x = label.mouse_mv_now_x - label.mouse_mv_last_x
-                    move_y = label.mouse_mv_now_y - label.mouse_mv_last_y
+                    move_x = label.mouse_mv_last_x - label.mouse_mv_now_x
+                    move_y = label.mouse_mv_last_y - label.mouse_mv_now_y
                     self.scroll.verticalScrollBar().setValue(self.scroll.verticalScrollBar().value() + move_y)
                     self.scroll.horizontalScrollBar().setValue(self.scroll.horizontalScrollBar().value() + move_x)
-                    label.mouse_mv_now_x, label.mouse_mv_now_y = label.mouse_mv_last_x + move_x, \
-                                                                 label.mouse_mv_last_y + move_y
+                    label.mouse_mv_last_x, label.mouse_mv_last_y = label.mouse_mv_now_x + move_x, \
+                                                                 label.mouse_mv_now_y + move_y
             return callback
         self.image_label.set_mouse_move_callback(move_fun())
 
