@@ -1,0 +1,17 @@
+click==7.1.2
+colorama==0.4.4
+loguru==0.5.3
+lxml==4.6.3
+numpy==1.20.3
+opencv-python==4.5.2.52
+pydantic==1.8.2
+PyQt5==5.15.4
+pyqt5-plugins==5.15.4.2.1.0
+PyQt5-Qt5==5.15.2
+PyQt5-sip==12.9.0
+pyqt5-tools==5.15.4.3.1
+python-dotenv==0.17.1
+qt5-applications==5.15.2.2.1
+qt5-tools==5.15.2.1.1
+typing-extensions==3.10.0.0
+win32-setctime==1.0.3
