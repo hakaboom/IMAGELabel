@@ -97,7 +97,7 @@ class IMAGE(_image):
     def imshow(self, title: str = None):
         """以GUI显示图片"""
         title = str(title or self.SHOW_INDEX())
-        cv2.namedWindow(title, cv2.WINDOW_KEEPRATIO)
+        # cv2.namedWindow(title, cv2.WINDOW_KEEPRATIO)
         cv2.imshow(title, self.imread())
         # cv2.waitKey(0)
         # cv2.destroyAllWindows()
@@ -133,7 +133,7 @@ class IMAGE(_image):
     def crop_image(self, rect):
         """区域范围截图"""
         img = self.imread()
-        height, width = self.shape
+        height, width = self.size
         if isinstance(rect, (list, tuple)) and len(rect) == 4:
             rect = Rect(*rect)
         elif isinstance(rect, Rect):
