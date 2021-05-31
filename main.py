@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import *
 from src.fold_widget import foldWidget as pictureListWidget
 from src.image_label import image_label as imageLabel
 import sys
+from loguru import logger
 
 
 test_color = [
