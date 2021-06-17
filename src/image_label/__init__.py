@@ -3,8 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from inspect import isfunction
-from utils.coordinate import Rect, Point, Size
-from utils.image.base_image import IMAGE
+from utils.image import IMAGE, Rect, Point, Size
 
 
 class custom_label(QLabel):
