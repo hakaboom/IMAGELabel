@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import PyQt5.QtCore
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -24,11 +25,6 @@ class custom_label(QLabel):
 
         self.setMouseTracking(True)  # 设置鼠标跟踪
         QShortcut(QKeySequence(self.tr("Ctrl+A")), self, self.draw_cap_rect)
-        QShortcut(QKeySequence(self.tr("Ctrl+S")), self, self.test)
-
-    def test(self):
-        for index, value in vars(self).items():
-            print(index, value)
 
     def draw_cap_rect(self):
         self.draw_flag = True
