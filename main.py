@@ -4,6 +4,7 @@ from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import *
 from src.fold_widget import foldWidget as pictureListWidget
 from src.image_label import image_label as imageLabel
+from src.system.configuration import SystemConfig
 from utils import check_file
 import sys
 import json
@@ -19,15 +20,12 @@ test_color = [
     '''QWidget{background-color:#ff0000;}''',
 ]
 
-WORK_PATH = os.getcwd()
-
 
 class MainUi(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainUi, self).__init__()
+        self.SystemConfig = SystemConfig()
         self.resize(960, 540)
-        self.config_dict = {}
-        self.read_sys_config_file()
         self.work_path = os.path.dirname(os.path.realpath('static'))
         self.main_widget = QWidget()  # 创建窗口主部件
         self.main_layout = QHBoxLayout()  # 创建主部件的网格布局
@@ -38,6 +36,7 @@ class MainUi(QtWidgets.QMainWindow):
         self.setWindowTitle("test")  # 设置窗口名
 
         # 工具栏
+        self.picture_list = None
         self.picture_list_widget = QWidget()
         self.picture_list_widget.setObjectName('picture_list_widget')
         self.picture_list_layout = QVBoxLayout()
@@ -54,28 +53,13 @@ class MainUi(QtWidgets.QMainWindow):
 
         self.init_picture_list()
 
-    def read_sys_config_file(self):
-        if not check_file('config.txt'):
-            self.create_new_sys_config_folder()
-        else:
-            pass
-
-    def create_new_sys_config_folder(self):
-        """新建系统设置文件"""
-        config_dict = {
-            'working_path':  WORK_PATH,  # 工作路径
-            'sys_config_file_name': 'config.txt',
-            'picture_profile': 'save.txt'  # 图片保存的文件名字
-        }
-        data = json.dumps(config_dict)
-        with open(os.path.join(config_dict['working_path'], config_dict['sys_config_file_name']), "x") as f:
-            f.write(data)
-
     def init_picture_list(self):
+        self.picture_list = pictureListWidget(self.SystemConfig)
+
+        self.picture_list_btn_clicked(self.picture_list.btn_item)
+        self.picture_list_layout.addWidget(self.picture_list)
+
         self.picture_list_widget.setLayout(self.picture_list_layout)
-        picture_list = pictureListWidget()
-        self.picture_list_btn_clicked(picture_list.btn_item)
-        self.picture_list_layout.addWidget(picture_list)
 
     def read_configuration_file(self):
         if not check_file(self.load_file_name):
