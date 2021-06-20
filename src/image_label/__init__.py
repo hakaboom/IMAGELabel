@@ -30,7 +30,7 @@ class custom_label(QLabel):
     def draw_cap_rect(self):
         self.draw_flag = True
         self.draw_start_point = self.get_mouse_in_label()
-        logger.debug('触发ctrl+A, 监控鼠标位置, draw_flag=True, point={}', self.draw_start_point)
+        logger.debug('触发ctrl+A, 监控鼠标位置, point={}', self.draw_start_point)
 
     def paintEvent(self, event):
         super().paintEvent(event)
@@ -105,41 +105,37 @@ class custom_label(QLabel):
 class image_label(QWidget):
     def __init__(self):
         super(image_label, self).__init__()
-        self.topFiller = QWidget(self)
-        self.image_label = custom_label(self.topFiller)
-        self.image_label.setAlignment(Qt.AlignLeft)
+        mainLayout = QVBoxLayout(self)
+
+        hSplitter = QSplitter(Qt.Horizontal)
 
         self.scroll = QScrollArea(self)
-        self.scroll.setWidget(self.topFiller)
-        vbox1 = QVBoxLayout(self)
-        vbox1.addWidget(self.image_label)
-        vbox1.setContentsMargins(0, 0, 0, 0)
-        self.topFiller.setLayout(vbox1)
+        self.scroll.setBackgroundRole(QPalette.Dark)
 
-        vbox2 = QVBoxLayout(self)
-        vbox2.addWidget(self.topFiller)
-        vbox2.setContentsMargins(0, 0, 0, 0)
-        self.scroll.setLayout(vbox2)
+        self.image_label = custom_label(self)
+        self.image_label.setAlignment(Qt.AlignLeft)
+        self.scroll.setWidget(self.image_label)
 
-        self.vbox = QVBoxLayout(self)
-        self.vbox.addWidget(self.scroll)
-        self.vbox.setContentsMargins(0, 0, 0, 0)
-        self.setLayout(self.vbox)
+        hSplitter.addWidget(self.scroll)
+
+        mainLayout.addWidget(self.scroll)
+        self.setLayout(mainLayout)
 
         # 设置图片
         self.image = None
         self.image_label_move_callback()
         self.image_crop_callback()
 
-    def set_topFiller_size(self):
-        """根据image大小修改"""
-        pass
-
-    def show_image(self, image: IMAGE):
+    def show_image(self, image):
         self.image = image
-        pixmap = self.image.cv_to_pixmap()
-        self.topFiller.setMinimumSize(pixmap.size().width(), pixmap.size().height())
+        pixmap = self.image['image'].cv_to_pixmap()
         self.image_label.setPixmap(pixmap)
+
+        # 设置图片显示区域大小
+        self.image_label.setMinimumHeight(self.image['image'].shape[0])
+        self.image_label.setMaximumHeight(self.image['image'].shape[0])
+        self.image_label.setMinimumWidth(self.image['image'].shape[1])
+        self.image_label.setMaximumWidth(self.image['image'].shape[1])
 
     def image_label_move_callback(self):
         """左键拖拽image_label,控制滑动条移动图片"""
@@ -164,16 +160,7 @@ class image_label(QWidget):
         def cap_fun():
             def callback(label: custom_label):
                 if label.draw_flag and label.left_flag:
-                    self.image.crop_image(label.draw_rect).imshow()
+                    logger.debug('划定图片区域:{}', label.draw_rect)
             return callback
 
         self.image_label.set_mouse_release_callback(cap_fun())
-
-    def connect_image_label(self):
-        def mouse_fun():
-            def fun():
-                self.scroll.verticalScrollBar().setValue(self.scroll.verticalScrollBar().value() + 100)
-
-            return fun
-
-        self.image_label.mouse_press_fun = mouse_fun()

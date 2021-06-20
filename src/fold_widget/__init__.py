@@ -27,8 +27,9 @@ class foldWidget(QListWidget):
             def onClick_fun():
                 image_data = value
                 def fun():
-                    logger.debug("选择图片按钮：路径={}", image_data['file_path'])
-                    image_widget.show_image(image_data['image'])
+                    logger.debug("选择图片按钮：路径={}, width={}, height={}",
+                                 image_data['file_path'], image_data['image'].shape[1], image_data['image'].shape[0])
+                    image_widget.show_image(image_data)
                 return fun
             button.onClick_fun = onClick_fun()
             button.clicked.connect(button.onClick_button)
