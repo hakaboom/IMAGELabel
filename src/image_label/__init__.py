@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from inspect import isfunction
+from loguru import logger
 from utils.image import IMAGE, Rect, Point, Size
 
 
@@ -29,6 +30,7 @@ class custom_label(QLabel):
     def draw_cap_rect(self):
         self.draw_flag = True
         self.draw_start_point = self.get_mouse_in_label()
+        logger.debug('触发ctrl+A, 监控鼠标位置, draw_flag=True, point={}', self.draw_start_point)
 
     def paintEvent(self, event):
         super().paintEvent(event)
@@ -47,6 +49,7 @@ class custom_label(QLabel):
         if event.buttons() == Qt.LeftButton:
             self.left_flag = True
             self.mouse_mv_last_point = Point(event.x(), event.y())
+
         if event.buttons() == Qt.LeftButton and self.draw_flag:
             self.draw_end_point = Point(event.x(), event.y())
         self.run_mouse_press_callback()
@@ -102,30 +105,29 @@ class custom_label(QLabel):
 class image_label(QWidget):
     def __init__(self):
         super(image_label, self).__init__()
-        self.topFiller = QWidget()
+        self.topFiller = QWidget(self)
         self.image_label = custom_label(self.topFiller)
         self.image_label.setAlignment(Qt.AlignLeft)
 
-        self.scroll = QScrollArea()
+        self.scroll = QScrollArea(self)
         self.scroll.setWidget(self.topFiller)
-        vbox1 = QVBoxLayout()
+        vbox1 = QVBoxLayout(self)
         vbox1.addWidget(self.image_label)
         vbox1.setContentsMargins(0, 0, 0, 0)
         self.topFiller.setLayout(vbox1)
 
-        vbox2 = QVBoxLayout()
+        vbox2 = QVBoxLayout(self)
         vbox2.addWidget(self.topFiller)
         vbox2.setContentsMargins(0, 0, 0, 0)
         self.scroll.setLayout(vbox2)
 
-        self.vbox = QVBoxLayout()
+        self.vbox = QVBoxLayout(self)
         self.vbox.addWidget(self.scroll)
         self.vbox.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.vbox)
+
         # 设置图片
         self.image = None
-        self.show_image('test.jpg')
-        # 设置回调函数
         self.image_label_move_callback()
         self.image_crop_callback()
 
@@ -133,8 +135,8 @@ class image_label(QWidget):
         """根据image大小修改"""
         pass
 
-    def show_image(self, image):
-        self.image = IMAGE(image)
+    def show_image(self, image: IMAGE):
+        self.image = image
         pixmap = self.image.cv_to_pixmap()
         self.topFiller.setMinimumSize(pixmap.size().width(), pixmap.size().height())
         self.image_label.setPixmap(pixmap)
@@ -161,9 +163,8 @@ class image_label(QWidget):
 
         def cap_fun():
             def callback(label: custom_label):
-                if label.draw_flag:
+                if label.draw_flag and label.left_flag:
                     self.image.crop_image(label.draw_rect).imshow()
-
             return callback
 
         self.image_label.set_mouse_release_callback(cap_fun())
